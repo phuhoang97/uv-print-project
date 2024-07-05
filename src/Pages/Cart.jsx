@@ -28,13 +28,15 @@ const Cart = () => {
           {i18n.t("cart.header.subtotal")}
         </h2>
       </div>
-      {cartItems.map((item, index) => (
+      {cartItems.map((item, 
+      // index
+          ) => (
         <CartItem
-          key={item.title}
+          key={item.id}
           item={item}
-          index={index}
-          stars={item.stars}
-          rates={item.rates}
+          // index={index}
+          // stars={item.stars}
+          // rates={item.rates}
         />
       ))}{" "}
       {/* Buttons for returning to shop, applying coupon, and proceeding to checkout */}

@@ -7,11 +7,29 @@ import i18n from "../components/common/components/LangConfig";
 import RedButton from "../components/common/components/RedButton";
 import WhiteButton from "../components/common/components/WhiteButton";
 import Loader from "../components/common/components/Loader";
+import { fetchProducts } from "../services/apiProduct";
+
 const AllProducts = () => {
   const [loading, setLoading] = useState(true);
   const [displayedItems, setDisplayedItems] = useState(10);
   const duplicatedItems = Array.from({ length: 2 }, () => ITEMS).flat();
   const totalItems = duplicatedItems.length;
+
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+      const fetchData = async () => {
+          try {
+              const response = await fetchProducts();
+              setProducts(response.data.data);
+              console.log(products[0].images[0]);
+          } catch (error) {
+              console.error('Error fetching products:', error);
+          }
+      };
+
+      fetchData();
+  }, []);
 
   const handleLoadMore = () => {
     window.scrollTo({
@@ -46,13 +64,13 @@ const AllProducts = () => {
                   <Loader />
                 </Grid>
               ))
-            : duplicatedItems.slice(0, displayedItems).map((item) => (
+            : products.slice(0, displayedItems).map((item) => (
                 <Grid item key={item.id}>
                   <FlashSaleItem
                     item={item}
-                    totalItems={totalItems}
-                    stars={item.stars}
-                    rates={item.rates}
+                    // totalItems={totalItems}
+                    // stars={item.stars}
+                    // rates={item.rates}
                   />
                 </Grid>
               ))}
