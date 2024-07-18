@@ -10,20 +10,14 @@ import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
 import RatingComp from "../components/common/components/Rating";
 import { ITEMS } from "../components/common/functions/items";
-import { getProductById } from "../services/apiProduct";
 import NotFound from "./NotFound";
-
 const Product = () => {
   const { handleIncrease, handleDecrease } = useCart();
   const [quantity, setQuantity] = useState(0);
   const [selectedSize, setSelectedSize] = useState(""); // State to track selected size
   let { id } = useParams();
-  const [product, setProduct] = useState(null);
 
-
-  // const product = ITEMS.find((item) => item.title === title);
-
- 
+  const selectedProduct = ITEMS.find((item) => item.id === id);
 
   useEffect(() => {
     if (selectedProduct) {
@@ -31,13 +25,6 @@ const Product = () => {
     }
   }, [selectedProduct]);
 
-  useEffect(() => {
-    // Gọi hàm getProductById để lấy thông tin sản phẩm từ API
-    getProductById(id)
-      .then(response => setProduct(response.data.data))
-      .catch(error => console.error('Error fetching product:', error));
-  }, [id]);
-  
   const handleDecreaseFunc = () => {
     handleDecrease(selectedProduct);
     setQuantity(selectedProduct.quantity);
@@ -80,12 +67,12 @@ const Product = () => {
   };
   return (
     <>
-      {product ? (
+      {selectedProduct ? (
         <div className="flex flex-col mx-4 md:mx-32 mt-48">
           <div className="mx-auto  flex flex-col gap-10">
             <ActiveLastBreadcrumb
-              path={`${i18n.t("footer.myAccount")}/${product.category_name}/${
-                product.name
+              path={`${i18n.t("footer.myAccount")}/${selectedProduct.type}/${
+                selectedProduct.id
               }`}
             />
             <div className="flex flex-col md:flex-row  gap-16">
@@ -101,8 +88,8 @@ const Product = () => {
                       whileTap={{ scale: 0.8 }}
                     >
                       <img
-                        src={product.images[0]}
-                        alt={product.name}
+                        src={selectedProduct.imageSrc}
+                        alt={selectedProduct.id}
                         className="transform transition-transform duration-300 hover:scale-105 focus:outline-none w-full h-full"
                       />
                     </motion.div>
@@ -116,8 +103,8 @@ const Product = () => {
                   onClick={handleImageClick}
                 >
                   <img
-                    src={product.imageSrc}
-                    alt={product.title}
+                    src={selectedProduct.imageSrc}
+                    alt={selectedProduct.id}
                     className="transform transition-transform duration-300 hover:scale-105 focus:outline-none w-full max-h-full"
                   />
                 </motion.div>
@@ -126,12 +113,12 @@ const Product = () => {
               <div className="flex gap-5 flex-col">
                 <div className="flex gap-4 flex-col">
                   <h2 className="text-xl md:text-2xl font-bold ">
-                    {product.title}
+                    {selectedProduct.id }
                   </h2>
                   <div className="flex  text-gray-500 text-sm gap-2 items-center ">
                     {renderStars()}
                     <span>
-                      ({product.rates} {i18n.t("productPage.reviews")})
+                      ({selectedProduct.rates} {i18n.t("productPage.reviews")})
                       <span className="mr-4 "></span>|{" "}
                       <span className="ml-4 text-green">
                         {i18n.t("productPage.inStock")}
@@ -140,15 +127,15 @@ const Product = () => {
                   </div>
                   <div className="flex gap-10">
                     <p className="text-gray-800 text-xl md:text-2xl font-inter">
-                      ${product.price}.00
+                      ${selectedProduct.price}.00
                     </p>
                     <RatingComp
                       text={i18n.t("productPage.review")}
-                      item={product}
+                      item={selectedProduct}
                     />{" "}
                   </div>
                   <p className="text-gray-800 w-full md:w-[373px] text-xs md:text-sm">
-                    {product.details}
+                    {selectedProduct.details}
                   </p>
                 </div>
                 <hr className="mx-30  border-gray-300" />
@@ -221,7 +208,7 @@ const Product = () => {
                       <RedButton name={i18n.t("redButtons.buyNow")} />
                     </Link>
                   )}
-                  <WishlistIcon product={product} />
+                  <WishlistIcon selectedProduct={selectedProduct} />
                 </div>
                 <div className="border-2 border-gray-400 w-full h-44 flex flex-col py-6 mt-4 rounded">
                   <div className="flex flex-row gap-4 justify-start items-center ml-4 mb-4">
@@ -266,7 +253,7 @@ const Product = () => {
                 </div>
               </div>
             </div>
-            <RelatedItems product={product} />
+            <RelatedItems selectedProduct={selectedProduct} />
           </div>
           <AnimatePresence>
             {isImageFullScreen && (
@@ -280,8 +267,8 @@ const Product = () => {
                 style={{ width: "100vw", height: "100vh" }} // Set full-screen width and height
               >
                 <motion.img
-                  src={product.imageSrc}
-                  alt={product.title}
+                  src={selectedProduct.imageSrc}
+                  alt={selectedProduct.id}
                   className="w-full h-auto max-h-[50vh] md:max-w-[50vw]"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}

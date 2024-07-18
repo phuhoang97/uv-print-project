@@ -10,6 +10,6 @@ export const fetchProducts = () => {
   return api.get("/products");
 };
 
-export const getProductById = (productId) => {
-  return api.get(`/products/${productId}`);
+export const getProductById = (id) => {
+  return api.get(`/products/${id}`);
 };
